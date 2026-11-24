@@ -1,0 +1,52 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Recuperation du projet depuis GitHub'
+                checkout scm
+            }
+        }
+
+        stage('Preparation') {
+            steps {
+                echo 'Preparation de Maven'
+                sh 'chmod +x mvnw'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Compilation du projet'
+                sh './mvnw clean compile'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Execution des tests'
+                sh './mvnw test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo 'Creation du package'
+                sh './mvnw package -DskipTests'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'SUCCESS : Pipeline executee avec succes !'
+        }
+
+        failure {
+            echo 'FAILURE : Une erreur est survenue !'
+        }
+    }
+}
