@@ -7,35 +7,43 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Recuperation du projet depuis GitHub'
-                checkout scm
             }
         }
 
         stage('Preparation') {
             steps {
-                echo 'Preparation de Maven'
-                sh 'chmod +x mvnw'
+                dir('timesheet-devops') {
+                    echo 'Preparation de Maven'
+                    sh 'chmod +x mvnw'
+                    sh './mvnw --version'
+                }
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Compilation du projet'
-                sh './mvnw clean compile'
+                dir('timesheet-devops') {
+                    echo 'Compilation du projet'
+                    sh './mvnw clean compile'
+                }
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Execution des tests'
-                sh './mvnw test'
+                dir('timesheet-devops') {
+                    echo 'Execution des tests'
+                    sh './mvnw test'
+                }
             }
         }
 
         stage('Package') {
             steps {
-                echo 'Creation du package'
-                sh './mvnw package -DskipTests'
+                dir('timesheet-devops') {
+                    echo 'Creation du package'
+                    sh './mvnw package -DskipTests'
+                }
             }
         }
     }
